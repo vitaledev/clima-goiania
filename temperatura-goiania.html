@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clima Gyn - Vibe Mix</title>
+    <!-- Fontes: Montserrat para o moderno, Press Start 2P para o pixel art -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --color-hot-bg: linear-gradient(135deg, #ff9966, #ff5e62);
+            --color-cool-bg: linear-gradient(135deg, #56ab2f, #a8e063);
+            --glass-bg: rgba(255, 255, 255, 0.25);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --text-color: #fff;
+            --card-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: var(--color-hot-bg);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: var(--text-color);
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body.mode-frio {
+            background: var(--color-cool-bg);
+            background-size: 400% 400%;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* --- BACKGROUND PIXEL ARTS --- */
+        
+        /* O Sol Pixelado */
+        .pixel-sun {
+            position: absolute;
+            top: 50px;
+            right: 50px;
+            width: 80px;
+            height: 80px;
+            background: #ffe100;
+            box-shadow: 6px 6px 0px rgba(0,0,0,0.2);
+            z-index: 0;
+            animation: sunPulse 2s infinite alternate;
+            /* Fazendo ficar quadrado/pixelado */
+            clip-path: polygon(
+                20% 0%, 80% 0%, 100% 20%, 100% 80%, 80% 100%, 20% 100%, 0% 80%, 0% 20%
+            );
+        }
+
+        @keyframes sunPulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.1); }
+        }
+
+        /* Nuvens Pixeladas */
+        .pixel-cloud {
+            position: absolute;
+            background: rgba(255,255,255,0.4);
+            width: 120px;
+            height: 40px;
+            z-index: 0;
+            /* Forma pixelada rudimentar via box-shadow ou clip-path */
+            box-shadow: 
+                20px -20px 0 0 rgba(255,255,255,0.4), 
+                50px -30px 0 0 rgba(255,255,255,0.4),
+                80px -20px 0 0 rgba(255,255,255,0.4);
+            animation: floatCloud 20s linear infinite;
+        }
+
+        .c1 { top: 20%; left: -150px; animation-duration: 25s; transform: scale(1.5); }
+        .c2 { top: 40%; left: -150px; animation-duration: 35s; animation-delay: 5s; }
+        .c3 { top: 10%; left: -150px; animation-duration: 45s; animation-delay: 2s; transform: scale(0.8); }
+
+        @keyframes floatCloud {
+            0% { left: -150px; }
+            100% { left: 110vw; }
+        }
+
+        /* Capivara Pixel Art (CSS Puro) */
+        .capybara-container {
+            position: fixed;
+            bottom: 0;
+            left: -100px;
+            width: 100px;
+            height: 100px;
+            z-index: 5;
+            animation: walk 25s linear infinite;
+            opacity: 0.8; /* Levemente transparente pra misturar com o fundo */
+        }
+
+        .capybara-pixel {
+            width: 4px;
+            height: 4px;
+            background: transparent;
+            color: #4a3b2a; 
+            box-shadow: 
+                20px 40px, 24px 40px, 28px 40px, 32px 40px, 36px 40px, 40px 40px, 44px 40px, 48px 40px, 52px 40px,
+                16px 44px, 20px 44px, 24px 44px, 28px 44px, 32px 44px, 36px 44px, 40px 44px, 44px 44px, 48px 44px, 52px 44px, 56px 44px,
+                16px 48px, 20px 48px, 24px 48px, 28px 48px, 32px 48px, 36px 48px, 40px 48px, 44px 48px, 48px 48px, 52px 48px, 56px 48px,
+                16px 52px, 20px 52px, 24px 52px, 28px 52px, 32px 52px, 36px 52px, 40px 52px, 44px 52px, 48px 52px, 52px 52px, 56px 52px,
+                56px 36px, 60px 36px, 64px 36px,
+                56px 32px, 60px 32px, 64px 32px, 68px 32px,
+                60px 28px, 64px 28px,
+                64px 34px 0 -1px #000, 
+                68px 36px 0 -1px #000, 
+                20px 56px, 24px 56px,
+                48px 56px, 52px 56px,
+                20px 60px, 24px 60px,
+                48px 60px, 52px 60px;
+            transform: scale(3); 
+        }
+
+        @keyframes walk {
+            0% { left: -150px; transform: scaleX(1); }
+            48% { left: 100vw; transform: scaleX(1); }
+            50% { left: 100vw; transform: scaleX(-1); }
+            98% { left: -150px; transform: scaleX(-1); }
+            100% { left: -150px; transform: scaleX(1); }
+        }
+
+        /* --- LAYOUT PRINCIPAL (MODERNO) --- */
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            z-index: 10;
+            display: grid;
+            gap: 30px;
+        }
+
+        @media (min-width: 800px) {
+            .container {
+                grid-template-columns: 350px 1fr;
+                align-items: start;
+            }
+        }
+
+        /* CARD DO TEMPO */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--card-shadow);
+            padding: 2.5rem;
+            text-align: center;
+            position: relative;
+            /* Efeito Tilt */
+            transition: transform 0.1s;
+        }
+
+        .location-badge {
+            background: rgba(0,0,0,0.2);
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            display: inline-block;
+            margin-bottom: 20px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .weather-icon {
+            font-size: 5rem;
+            display: block;
+            margin: 10px 0;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .temperature {
+            font-size: 6rem;
+            font-weight: 900;
+            line-height: 1;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .status-msg {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-top: 20px;
+            min-height: 4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-style: italic;
+        }
+
+        .refresh-btn {
+            background: #fff;
+            color: #333;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-family: 'Montserrat', sans-serif;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 20px;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .refresh-btn:hover { transform: scale(1.05); }
+
+        /* GRID CULTURAL (SEM IMAGENS, SÓ TEXTO) */
+        .culture-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        @media (min-width: 600px) {
+            .culture-grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        .culture-item {
+            background: rgba(255, 255, 255, 0.85);
+            color: #333;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: left;
+            transition: transform 0.3s;
+            border-left: 5px solid #009c3b;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .culture-item:hover {
+            transform: translateY(-5px);
+            background: #fff;
+        }
+        
+        /* Ícone 8-bit decorativo no canto do card */
+        .culture-item::after {
+            content: '👾';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1rem;
+            opacity: 0.3;
+        }
+
+        .culture-item h3 {
+            color: #009c3b;
+            margin-bottom: 8px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- ELEMENTOS DO BACKGROUND (Pixel Art) -->
+    <div class="pixel-sun"></div>
+    <div class="pixel-cloud c1"></div>
+    <div class="pixel-cloud c2"></div>
+    <div class="pixel-cloud c3"></div>
+    <div class="capybara-container">
+        <div class="capybara-pixel"></div>
+    </div>
+
+    <div class="container">
+        <!-- CARD PRINCIPAL (Moderno) -->
+        <div class="glass-card">
+            <div class="location-badge">📍 Goiânia, GO</div>
+            <h1>Previsão do Caos</h1>
+            
+            <div id="weather-content">
+                <div class="weather-icon" id="w-icon">☀️</div>
+                <div>
+                    <span class="temperature" id="w-temp">--</span>
+                    <span style="font-size: 2rem; vertical-align: super;">°C</span>
+                </div>
+                <div class="status-msg" id="w-msg">Consultando os astros...</div>
+            </div>
+
+            <button class="refresh-btn" onclick="fetchWeather(true)">Atualizar Agora</button>
+        </div>
+
+        <!-- CURIOSIDADES (Limpo, sem imagens) -->
+        <div class="culture-grid">
+            <div class="culture-item">
+                <h3>🌽 Pamonha Sagrada</h3>
+                <p>Patrimônio da humanidade goiana. Se não tiver de sal com queijo e pimenta, nem me chame.</p>
+            </div>
+            <div class="culture-item">
+                <h3>🚗 T-63 (The Hell)</h3>
+                <p>Onde o filho chora e a mãe não vê. Evite em horários de pico ou se tiver amor à vida.</p>
+            </div>
+            <div class="culture-item">
+                <h3>🌳 Ipês na Seca</h3>
+                <p>A única coisa que nos impede de enlouquecer com a poeira vermelha em Agosto.</p>
+            </div>
+            <div class="culture-item">
+                <h3>🍔 Pit Dog 24h</h3>
+                <p>Patrimônio imaterial! Nada como um X-Tudo com molho verde depois da balada.</p>
+            </div>
+            <div class="culture-item">
+                <h3>🌧️ Chuva em Gyn</h3>
+                <p>Evento raro. Quando acontece, o goiano esquece como dirige e a cidade para.</p>
+            </div>
+            <div class="culture-item">
+                <h3>🤝 "Uai" e "Trem"</h3>
+                <p>As duas palavras mais versáteis do universo. Servem pra tudo, de objeto a sentimento.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "https://api.open-meteo.com/v1/forecast?latitude=-16.6869&longitude=-49.2648&current_weather=true&timezone=America%2FSao_Paulo";
+
+        const elTemp = document.getElementById('w-temp');
+        const elMsg = document.getElementById('w-msg');
+        const elIcon = document.getElementById('w-icon');
+        const body = document.body;
+
+        // --- LISTA EXPANDIDA DE FRASES ---
+        
+        const frasesCalor = [
+            "Nu! Tá derretendo até o asfalto do autódromo.",
+            "Certeza que o sol tirou férias na Praça Cívica.",
+            "Tá mais quente que frigideira sem óleo.",
+            "Vontade de morar dentro do freezer do Bretas.",
+            "Sensação térmica: Bafo de Dragão.",
+            "Se jogar um ovo no chão, nasce pintinho frito.",
+            "Ar condicionado no 15 e eu tô suando.",
+            "Goiano não transpira, goiano minera água.",
+            "Desliga o sol que a gente quer descer!",
+            "Tá calor ou é um ensaio pro apocalipse?",
+            "Vou ter que vender um rim pra pagar a conta de luz.",
+            "O pequi já tá cozinhando no pé.",
+            "Até a lagartixa tá usando chinelo hoje.",
+            "Calor de rachar o coco do pequi.",
+            "Não é calor, é amostra grátis do inferno."
+        ];
+
+        const frasesFrio = [
+            "25 graus? Peguei meu edredom de orelha.",
+            "Goiano viu neblina e já acha que tá em Londres.",
+            "Abaixo de 30 graus é hipotermia pra nós.",
+            "Tira o casaco de couro do armário (e o mofo).",
+            "É o fim dos tempos, tá fresco em Goiânia!",
+            "Deve ser bug na Matrix do Cerrado.",
+            "Só acredito vendo... e vendo não acredito.",
+            "Aproveita pra tomar caldo antes que o sol volte.",
+            "Frio de renguear custiá (mentira, tá 22°C).",
+            "Certeza que o termômetro quebrou.",
+            "Essa temperatura é fake news.",
+            "Estão manipulando os dados, sinto calor na alma.",
+            "Goiânia virou Curitiba? Deus me livre.",
+            "Vou usar bota e cachecol, me julguem."
+        ];
+
+        async function fetchWeather(click) {
+            if(click) document.querySelector('.refresh-btn').innerText = "Carregando...";
+            
+            try {
+                const response = await fetch(API_URL);
+                const data = await response.json();
+                const temp = data.current_weather.temperature;
+                
+                // Animação numérica simples
+                let start = 0;
+                const duration = 1000;
+                const stepTime = 20;
+                const steps = duration / stepTime;
+                const increment = temp / steps;
+                
+                const timer = setInterval(() => {
+                    start += increment;
+                    if (start >= temp) {
+                        elTemp.innerText = Math.round(temp);
+                        clearInterval(timer);
+                    } else {
+                        elTemp.innerText = Math.round(start);
+                    }
+                }, stepTime);
+
+                updateInterface(temp);
+
+                // Confete
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+
+            } catch (e) {
+                console.error(e);
+                elMsg.innerText = "Deu ruim no satélite. Tenta de novo.";
+                elTemp.innerText = "--";
+            } finally {
+                if(click) document.querySelector('.refresh-btn').innerText = "Atualizar Agora";
+            }
+        }
+
+        function updateInterface(temp) {
+            if (temp >= 30) {
+                body.className = '';
+                elIcon.innerText = "🔥";
+                elMsg.innerText = `"${frasesCalor[Math.floor(Math.random() * frasesCalor.length)]}"`;
+            } else {
+                body.className = 'mode-frio';
+                elIcon.innerText = "❄️"; // Neve irônica
+                elMsg.innerText = `"${frasesFrio[Math.floor(Math.random() * frasesFrio.length)]}"`;
+            }
+        }
+
+        fetchWeather();
+    </script>
+</body>
+</html>
